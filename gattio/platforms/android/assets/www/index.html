@@ -1,0 +1,178 @@
+<!doctype html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+		<script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+  </head>
+  <body>
+    <script src="http://115.29.149.19:3333/socket.io/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+		$(function(){
+			var socket = io("http://115.29.149.19:3333/gatt.io.test");
+			gatt.socket = socket;
+			socket.on('request',function(data){
+				gatt.room = data.room;
+				gatt.exec(data.url,{
+					callback : function(response){
+						response.room = gatt.room;
+						gatt.socket.emit("response",response);
+					},
+				});
+			});
+		});
+    </script>
+  </body>
+</html>
+<!--<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		
+		<title></title>
+		<link rel="stylesheet" href="css/jquery.mobile.min.css" />
+		<script type="text/javascript" charset="utf-8" src="js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" charset="utf-8" src="js/jquery.mobile.min.js"></script>
+		<script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<script>
+			var app = {
+				/*write : function(){
+					var url = "gatt://90:59:AF:07:5D:94?suuid=1802&sindex=0&cuuid=2a06&cindex=0&method=write&value=AQ";
+					gatt.exec(url,{
+						success:function(response){
+							alert("success:" + JSON.stringify(response));
+						},
+						error:function(response){
+							alert("error:" + JSON.stringify(response));
+						},
+					});
+				},
+				read : function(){
+					var url = "gatt://90:59:AF:07:5D:94?suuid=180a&cuuid=2a23&method=read";
+					gatt.exec(url,{
+						success:function(response){
+							alert("success:" + JSON.stringify(response));
+							alert(response.data.value.getHexString());
+						},
+						error:function(response){
+							alert("error:" + JSON.stringify(response));
+						},
+					});
+				},
+				subscribe : function(){
+					var url = "gatt://90:59:AF:07:5D:94?suuid=ffe0&cuuid=f000ffe1-0451-4000-b000-000000000000&method=subscribe";
+					gatt.exec(url,{
+						success:function(response){
+							alert("success:" + JSON.stringify(response));
+						},
+						error:function(response){
+							alert("error:" + JSON.stringify(response));
+						},
+					});
+				},
+				unsubscribe : function(){
+					var url = "gatt://90:59:AF:07:5D:94?suuid=ffe0&cuuid=f000ffe1-0451-4000-b000-000000000000&method=unsubscribe";
+					gatt.exec(url,{
+						success:function(response){
+							alert("success:" + JSON.stringify(response));
+						},
+						error:function(response){
+							alert("error:" + JSON.stringify(response));
+						},
+					});
+				},*/
+				
+
+				write : function(){
+					gatt.write("gatt://20:CD:39:AD:65:20?suuid=ffe0&sindex=0&cuuid=ffe1&cindex=0&value=AQAQAQAQ",function(response){
+						alert(JSON.stringify(response));
+					});
+				},
+				read : function(){
+					gatt.read("gatt://90:59:AF:07:5D:94?suuid=180a&cuuid=2a23",function(response){
+						alert(JSON.stringify(response));
+					});
+				},
+				subscribe : function(){
+					gatt.subscribe("gatt://90:59:AF:07:5D:94?suuid=ffe0&cuuid=f000ffe1-0451-4000-b000-000000000000",function(response){
+						alert(JSON.stringify(response));
+					});
+				},
+				unsubscribe : function(){
+					gatt.unsubscribe("gatt://90:59:AF:07:5D:94?suuid=ffe0&cuuid=f000ffe1-0451-4000-b000-000000000000",function(response){
+						alert(JSON.stringify(response));
+					});
+				},
+				startscan : function(){
+					gatt.exec("gatt://localhost?method=startscan",{
+						success : function(data){
+							$('#responses').append($('<li>').text(JSON.stringify(data.device.deviceAddress)));
+						}
+					});
+				},
+				stopscan : function(){
+					gatt.exec("gatt://localhost?method=stopscan",{
+						callback : function(data){
+							alert(JSON.stringify(data));
+						}
+					});
+				},
+				discoverServices : function(){
+					gatt.exec("gatt://90:59:AF:07:5D:94?method=discoverServices",{
+						success : function(data){
+							for(var i = 0;i < data.services.length;i++){
+								$('#responses').append($('<li>').text(data.services[i].uuid));								
+							};
+						}
+					});					
+				},
+				discoverCharacteristics : function(){
+					gatt.exec("gatt://90:59:AF:07:5D:94?suuid=180a&method=discoverCharacteristics",{
+						success : function(data){
+							for(var i = 0;i < data.characteristics.length;i++){
+								$('#responses').append($('<li>').text(data.characteristics[i].uuid));								
+							};
+						}
+					});					
+				},
+				clear : function(){
+					$('ul li').remove();
+				},
+
+			};
+		</script>
+		
+		<style>  
+    		div.ui-slider-switch { width: 9em } 
+			#responses { list-style-type: none; margin: 0; padding: 0; }
+			#responses li { padding: 5px 10px; }
+			#responses li:nth-child(odd) { background: #eee; }			
+		</style> 
+	</head>
+	<body>
+		<div data-role='page' id="content_page">
+			<div data-role='header' data-id="PersistentHeader" data-position="fixed">
+				<h1>GATTIO-Dev</h1>
+			</div>
+			<div data-role='content'>
+				<a id="write" href="javascript:void(0)" onclick="app.write();" data-role="button" style="clear:both; text-align:center;">write!</a>
+				<a id="read" href="javascript:void(0)" onclick="app.read();" data-role="button" style="clear:both; text-align:center;">read!</a>
+				<a id="subscribe" href="javascript:void(0)" onclick="app.subscribe();" data-role="button" style="clear:both; text-align:center;">subscribe!</a>
+				<a id="unsubscribe" href="javascript:void(0)" onclick="app.unsubscribe();" data-role="button" style="clear:both; text-align:center;">unsubscribe!</a>
+				<a id="startscan" href="javascript:void(0)" onclick="app.startscan();" data-role="button" style="clear:both; text-align:center;">startscan!</a>
+				<a id="stopscan" href="javascript:void(0)" onclick="app.stopscan();" data-role="button" style="clear:both; text-align:center;">stopscan!</a>
+				<a id="discoverServices" href="javascript:void(0)" onclick="app.discoverServices();" data-role="button" style="clear:both; text-align:center;">discoverServices!</a>
+				<a id="discoverCharacteristics" href="javascript:void(0)" onclick="app.discoverCharacteristics();" data-role="button" style="clear:both; text-align:center;">discoverCharacteristics!</a>
+				<a id="clear" href="javascript:void(0)" onclick="app.clear();" data-role="button" style="clear:both; text-align:center;">clear!</a>
+				<div id="user_cont" style="clear:both; margin-top:20px;margin-bottom:10px;">
+					<ul id="responses"></ul>
+				</div>
+			</div>
+		</div>
+	
+	</body>
+</html>
+-->

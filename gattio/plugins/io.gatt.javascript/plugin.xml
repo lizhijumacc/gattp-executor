@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="io.gatt.javascript"
+    version="0.1.0">
+
+    <name>gattio</name>
+	<description>gattio</description>
+	<keywords>gatt</keywords>
+	<engines>
+        <engine name="cordova" version=">=3.0.0" />
+    </engines>
+	
+	<js-module src="www/gatt.js" name="gatt">
+        <merges target="window.gatt" />
+    </js-module>
+	
+	<dependency id="org" url="https://github.com/bcsphere/bluetooth.git"/>
+</plugin>
